@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horror Clock Tower</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0608; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .scene {
+      background: linear-gradient(180deg, #0a0608 0%, #120d14 40%, #1a0f1c 100%);
+      min-height: 600px;
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+      padding-bottom: 0;
+    }
+    .moon {
+      position: absolute;
+      top: 30px; right: 80px;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #e8dfc0, #c8b870);
+      box-shadow: 0 0 40px 10px rgba(200,184,112,0.18);
+    }
+    .moon-cloud {
+      position: absolute;
+      top: 18px; right: 60px;
+      width: 110px; height: 30px;
+      background: rgba(30,18,36,0.7);
+      border-radius: 50%;
+      filter: blur(4px);
+    }
+    .bat { position: absolute; }
+    .fog {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(180deg, transparent, rgba(60,30,70,0.35));
+      pointer-events: none;
+    }
+    .tower-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+    .spire {
+      width: 0; height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-bottom: 70px solid #1c1020;
+      filter: drop-shadow(0 -4px 8px rgba(120,60,140,0.3));
+      position: relative;
+    }
+    .spire::after {
+      content: '';
+      position: absolute;
+      top: 12px; left: -3px;
+      width: 6px; height: 40px;
+      background: #2e1a38;
+      transform: translateX(-50%);
+    }
+    .belfry {
+      width: 110px;
+      background: #1c1020;
+      border: 1.5px solid #3a2248;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 4px;
+    }
+    .arch-window {
+      width: 38px; height: 50px;
+      border-radius: 19px 19px 0 0;
+      background: #0d0810;
+      border: 1px solid #3a2248;
+      position: relative;
+      overflow: hidden;
+      margin: 4px 0;
+    }
+    .arch-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 80%, rgba(180,60,60,0.18), transparent 70%);
+      animation: flicker 3s infinite alternate;
+    }
+    @keyframes flicker {
+      0%,100% { opacity: 1; }
+      33% { opacity: 0.5; }
+      66% { opacity: 0.8; }
+      80% { opacity: 0.3; }
+    }
+    .bell-row { display: flex; gap: 18px; }
+    .gargoyle {
+      position: absolute;
+      bottom: -8px;
+      font-size: 18px;
+      color: #3a2248;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    }
+    .gargoyle.left { left: -14px; transform: scaleX(-1); }
+    .gargoyle.right { right: -14px; }
+    .cornice {
+      width: 120px; height: 10px;
+      background: #221628;
+      border: 1px solid #3a2248;
+    }
+    .clock-body {
+      width: 140px;
+      background: #1c1020;
+      border: 1.5px solid #3a2248;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0 8px;
+      position: relative;
+    }
+    .clock-face {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #1e1226, #100c18);
+      border: 3px solid #3a2248;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px 4px rgba(120,30,30,0.18), inset 0 0 20px rgba(0,0,0,0.7);
+    }
+    .clock-face::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 0.5px solid #3a2248;
+    }
+    .roman {
+      position: absolute;
+      font-family: 'Cinzel', serif;
+      font-size: 7.5px;
+      color: #6a4a7a;
+      font-weight: 700;
+    }
+    .clock-svg { position: absolute; width: 90px; height: 90px; }
+    .window-slit {
+      width: 16px; height: 28px;
+      border-radius: 8px 8px 0 0;
+      background: #0d0810;
+      border: 1px solid #3a2248;
+      margin: 8px 0 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .window-slit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(180,60,60,0.08);
+      animation: flicker 4s infinite alternate;
+    }
+    .mid-section {
+      width: 130px;
+      background: #1a0f1e;
+      border: 1.5px solid #3a2248;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px 0;
+    }
+    .slit-row { display: flex; gap: 24px; }
+    .cornice2 {
+      width: 150px; height: 10px;
+      background: #221628;
+      border: 1px solid #3a2248;
+    }
+    .base {
+      width: 160px;
+      background: #180e1c;
+      border: 1.5px solid #3a2248;
+      padding: 18px 0 12px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .door {
+      width: 34px; height: 52px;
+      border-radius: 17px 17px 0 0;
+      background: #0d0810;
+      border: 1px solid #3a2248;
+      position: relative;
+      overflow: hidden;
+    }
+    .door::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(180,60,60,0.13), transparent 60%);
+      animation: flicker 5s infinite alternate;
+    }
+    .stone-line {
+      width: 140px; height: 1px;
+      background: #3a2248;
+      margin: 6px 0;
+      opacity: 0.4;
+    }
+    .time-display {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #8a5a9a;
+      margin-top: 6px;
+    }
+    .ground {
+      width: 100%;
+      height: 24px;
+      background: linear-gradient(180deg, #140c18, #0a0608);
+      border-top: 1px solid #2a1a34;
+      margin-top: -2px;
+      z-index: 1;
+    }
+    .tree { position: absolute; bottom: 22px; z-index: 1; }
+    .blood-drip {
+      position: absolute;
+      top: 0; width: 2px;
+      background: linear-gradient(180deg, #8b1a1a, #5a0f0f);
+      border-radius: 0 0 2px 2px;
+      animation: drip 4s infinite;
+    }
+    @keyframes drip {
+      0% { height: 0; opacity: 1; }
+      70% { height: 18px; opacity: 1; }
+      100% { height: 18px; opacity: 0; }
+    }
+    .bat-anim { animation: batfly 8s infinite linear; }
+    .bat-anim2 { animation: batfly2 11s infinite linear; }
+    @keyframes batfly {
+      0% { transform: translate(0,0) scaleX(1); }
+      25% { transform: translate(-40px,-15px) scaleX(1); }
+      50% { transform: translate(-80px,5px) scaleX(-1); }
+      75% { transform: translate(-40px,-10px) scaleX(-1); }
+      100% { transform: translate(0,0) scaleX(1); }
+    }
+    @keyframes batfly2 {
+      0% { transform: translate(0,0) scaleX(-1); }
+      30% { transform: translate(30px,-20px) scaleX(-1); }
+      60% { transform: translate(70px,10px) scaleX(1); }
+      80% { transform: translate(30px,-5px) scaleX(1); }
+      100% { transform: translate(0,0) scaleX(-1); }
+    }
+    .lightning { position: absolute; opacity: 0; animation: strike 9s infinite; }
+    @keyframes strike {
+      0%,89%,91%,93%,100% { opacity: 0; }
+      90%,92% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" id="scene">
+    <!-- Moon -->
+    <div class="moon"></div>
+    <div class="moon-cloud"></div>
+
+    <!-- Lightning -->
+    <svg class="lightning" style="top:10px;left:120px;width:60px;height:90px;" viewBox="0 0 60 90">
+      <polyline points="35,0 20,40 32,40 10,90" fill="none" stroke="#c8c0e0" stroke-width="2.5"/>
+    </svg>
+
+    <!-- Bats -->
+    <svg class="bat bat-anim" style="top:70px;left:160px;width:28px;height:14px;" viewBox="0 0 28 14">
+      <path d="M14,7 Q10,0 2,2 Q6,7 8,7 Q6,10 2,12 Q8,10 14,7Z" fill="#1a0f1e"/>
+      <path d="M14,7 Q18,0 26,2 Q22,7 20,7 Q22,10 26,12 Q20,10 14,7Z" fill="#1a0f1e"/>
+      <circle cx="14" cy="7" r="2" fill="#1a0f1e"/>
+    </svg>
+    <svg class="bat bat-anim2" style="top:50px;left:240px;width:22px;height:11px;" viewBox="0 0 28 14">
+      <path d="M14,7 Q10,0 2,2 Q6,7 8,7 Q6,10 2,12 Q8,10 14,7Z" fill="#1a0f1e"/>
+      <path d="M14,7 Q18,0 26,2 Q22,7 20,7 Q22,10 26,12 Q20,10 14,7Z" fill="#1a0f1e"/>
+      <circle cx="14" cy="7" r="2" fill="#1a0f1e"/>
+    </svg>
+
+    <!-- Dead trees -->
+    <svg class="tree" style="left:18px;width:55px;height:130px;" viewBox="0 0 55 130">
+      <line x1="28" y1="130" x2="28" y2="30" stroke="#1a0f1e" stroke-width="5"/>
+      <line x1="28" y1="70" x2="8" y2="45" stroke="#1a0f1e" stroke-width="2.5"/>
+      <line x1="28" y1="55" x2="45" y2="30" stroke="#1a0f1e" stroke-width="2"/>
+      <line x1="28" y1="85" x2="10" y2="75" stroke="#1a0f1e" stroke-width="2"/>
+      <line x1="8" y1="45" x2="2" y2="35" stroke="#1a0f1e" stroke-width="1.5"/>
+      <line x1="45" y1="30" x2="52" y2="20" stroke="#1a0f1e" stroke-width="1.5"/>
+    </svg>
+    <svg class="tree" style="right:12px;width:45px;height:110px;" viewBox="0 0 45 110">
+      <line x1="22" y1="110" x2="22" y2="20" stroke="#1a0f1e" stroke-width="4"/>
+      <line x1="22" y1="60" x2="5" y2="38" stroke="#1a0f1e" stroke-width="2"/>
+      <line x1="22" y1="45" x2="38" y2="25" stroke="#1a0f1e" stroke-width="2"/>
+      <line x1="22" y1="75" x2="8" y2="65" stroke="#1a0f1e" stroke-width="1.5"/>
+      <line x1="5" y1="38" x2="0" y2="28" stroke="#1a0f1e" stroke-width="1.2"/>
+    </svg>
+
+    <!-- Clock Tower -->
+    <div class="tower-wrap">
+      <!-- Spire -->
+      <div class="spire"></div>
+
+      <!-- Belfry -->
+      <div class="belfry" style="height:70px;">
+        <div class="bell-row">
+          <div class="arch-window"><div class="arch-glow"></div></div>
+          <div class="arch-window"><div class="arch-glow"></div></div>
+        </div>
+        <div class="gargoyle left">&#9654;</div>
+        <div class="gargoyle right">&#9654;</div>
+      </div>
+
+      <div class="cornice"></div>
+
+      <!-- Clock section -->
+      <div class="clock-body">
+        <!-- Blood drips -->
+        <div class="blood-drip" style="left:30px;animation-delay:0s;"></div>
+        <div class="blood-drip" style="left:58px;animation-delay:1.5s;"></div>
+        <div class="blood-drip" style="left:88px;animation-delay:0.8s;"></div>
+        <div class="blood-drip" style="left:112px;animation-delay:2.2s;"></div>
+
+        <div class="clock-face">
+          <span class="roman" style="top:8px;left:50%;transform:translateX(-50%)">XII</span>
+          <span class="roman" style="right:7px;top:50%;transform:translateY(-50%)">III</span>
+          <span class="roman" style="bottom:8px;left:50%;transform:translateX(-50%)">VI</span>
+          <span class="roman" style="left:5px;top:50%;transform:translateY(-50%)">IX</span>
+          <span class="roman" style="top:16px;right:17px;font-size:6.5px">II</span>
+          <span class="roman" style="top:16px;left:17px;font-size:6.5px">X</span>
+          <span class="roman" style="bottom:16px;right:15px;font-size:6.5px">IV</span>
+          <span class="roman" style="bottom:16px;left:13px;font-size:6.5px">VIII</span>
+
+          <svg class="clock-svg" viewBox="0 0 90 90" id="clock-svg">
+            <line id="hour-hand" x1="45" y1="45" x2="45" y2="24" stroke="#6a3a7a" stroke-width="3.5" stroke-linecap="round"/>
+            <line id="minute-hand" x1="45" y1="45" x2="45" y2="16" stroke="#8a5a9a" stroke-width="2" stroke-linecap="round"/>
+            <line id="second-hand" x1="45" y1="50" x2="45" y2="12" stroke="#8b1a1a" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="45" cy="45" r="4" fill="#3a2248"/>
+            <circle cx="45" cy="45" r="1.5" fill="#8b1a1a"/>
+          </svg>
+        </div>
+
+        <div class="time-display" id="watch"> </div>
+      </div>
+
+      <div class="cornice2"></div>
+
+      <!-- Mid section -->
+      <div class="mid-section">
+        <div class="slit-row">
+          <div class="window-slit"></div>
+          <div class="window-slit"></div>
+          <div class="window-slit"></div>
+        </div>
+        <div class="stone-line"></div>
+        <div class="stone-line"></div>
+      </div>
+
+      <div class="cornice2"></div>
+
+      <!-- Base -->
+      <div class="base">
+        <div class="stone-line"></div>
+        <div class="door"></div>
+        <div class="stone-line"></div>
+        <div class="stone-line" style="margin-top:2px"></div>
+      </div>
+    </div>
+
+    <div class="fog"></div>
+    <div class="ground"></div>
+  </div>
+
+  <script>
+    // Your index.js logic — update clock hands and digital display
+    function rotHand(id, deg, cx, cy) {
+      const el = document.getElementById(id);
+      el.setAttribute('transform', `rotate(${deg},${cx},${cy})`);
+    }
+    function tick() {
+      const now = new Date();
+      const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+      rotHand('hour-hand',   (h % 12) * 30 + m * 0.5, 45, 45);
+      rotHand('minute-hand', m * 6 + s * 0.1,          45, 45);
+      rotHand('second-hand', s * 6,                     45, 45);
+      const pad = n => String(n).padStart(2, '0');
+      document.getElementById('watch').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
